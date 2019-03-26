@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
@@ -40,10 +39,10 @@ namespace WindowsFormsApp3
 
         private void Form1_Load(object sender, EventArgs e)
         {
+          
 
-            
             promptAccountNum();
-               
+
         }
 
         void promptAccountNum()
@@ -126,21 +125,18 @@ namespace WindowsFormsApp3
             {
                 lstThing.Items.RemoveAt(0);
             }
-            lstThing.Items.Add("");
+            
             lstThing.Items.Add("1>10 ");
-            lstThing.Items.Add("");
             lstThing.Items.Add("");
             lstThing.Items.Add("2>20 ");
             lstThing.Items.Add("");
-            lstThing.Items.Add("");
             lstThing.Items.Add("3>40 ");
-            lstThing.Items.Add("");
             lstThing.Items.Add("");
             lstThing.Items.Add("4>100 ");
             lstThing.Items.Add("");
-            lstThing.Items.Add("");
-            lstThing.Items.Add("5> 500");
-            lstThing.Items.Add("");
+            lstThing.Items.Add("5>500 ");
+
+
 
             lstThing.Items.Add("3> exit");
             resetButtons();
@@ -151,6 +147,8 @@ namespace WindowsFormsApp3
             btnOption5.Click += new EventHandler(selectMoney);
         }
 
+        
+
         void selectMoney(object sender, EventArgs e)
         {
             Button button = sender as Button;
@@ -159,7 +157,9 @@ namespace WindowsFormsApp3
             switch (switchNum)
             {
                 case "1":
+                    
                     decBalance(10);
+                    moneyGif();
                     break;
                 case "2":
                     decBalance(20);
@@ -178,6 +178,13 @@ namespace WindowsFormsApp3
                     break;
             }
 
+        }
+
+        async void moneyGif()
+        {
+            money.Visible = true;
+            await Task.Delay(1000);
+       //     money.Visible = false;
         }
         void decBalance(int value)
         {
@@ -343,6 +350,11 @@ namespace WindowsFormsApp3
         {
 
         }
+
+        private void txtInput_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 
 
@@ -351,6 +363,8 @@ namespace WindowsFormsApp3
      */
     public class Account
     {
+        
+        
         //the attributes for the account
         private int balance;
         private int pin;
@@ -385,12 +399,15 @@ namespace WindowsFormsApp3
          */
         public Boolean decrementBalance(int amount)
         {
+            //Bank.sema.Release();
+           // Bank.sema.WaitOne();
             if (this.balance > amount)
             {
-                TestAwait(amount);
-               
-                
-                return true; 
+                int temp = balance;
+                Thread.Sleep(4000);
+                balance = temp - amount;
+          //      Bank.sema.Release();
+                return true;
             }
             else
             {
@@ -398,27 +415,14 @@ namespace WindowsFormsApp3
             }
         }
 
-        public void TestAwait(int amount)
-        {
-            var t = Task.Factory.StartNew(() =>
-            {
-                Console.WriteLine("Start");
-                return Task.Factory.StartNew(() =>
-                {
-                    Task.Delay(2000).Wait(); balance -= amount; ;
-                });
-            });
-            t.Wait();
-            Console.WriteLine("All done");
-        }
-            /*
-             * This funciton check the account pin against the argument passed to it
-             *
-             * returns:
-             * true if they match
-             * false if they do not
-             */
-            public Boolean checkPin(int pinEntered)
+        /*
+         * This funciton check the account pin against the argument passed to it
+         *
+         * returns:
+         * true if they match
+         * false if they do not
+         */
+        public Boolean checkPin(int pinEntered)
         {
             if (pinEntered == pin)
             {
@@ -441,199 +445,12 @@ namespace WindowsFormsApp3
      *      the constutor contains the main funcitonality.
      */
 
-    class ATM
-    {
-        //local referance to the array of accounts
-        private Account[] ac;
-
-        //this is a referance to the account that is being used
-        private Account activeAccount = null;
-
-        // the atm constructor takes an array of account objects as a referance
-        public ATM(Account[] ac)
-        {
-            this.ac = ac;
-
-            // an infinite loop to keep the flow of controll going on and on
-            while (true)
-            {
-
-                //ask for account number and store result in acctiveAccount (null if no match found)
-              
-
-                if (activeAccount != null)
-                {
-                    //if the account is found check the pin 
-                    if (activeAccount.checkPin(this.promptForPin()))
-                    {
-                        //if the pin is a match give the options to do stuff to the account (take money out, view balance, exit)
-                        dispOptions();
-                    }
-                }
-                else
-                {   //if the account number entered is not found let the user know!
-                    Console.WriteLine("no matching account found.");
-                }
-
-                //wipes all text from the console
-                Console.Clear();
-            }
-
-
-        }
-      
-
-        /*
-         *    this method promts for the input of an account number
-         *    the string input is then converted to an int
-         *    a for loop is used to check the enterd account number
-         *    against those held in the account array
-         *    if a match is found a referance to the match is returned
-         *    if the for loop completest with no match we return null
-         * 
-         */
-
-        /*
-         * 
-         *  this jsut promt the use to enter a pin number
-         *  
-         * returns the string entered converted to an int
-         * 
-         */
-        private int promptForPin()
-        {
-            Console.WriteLine("enter pin:");
-            String str = Console.ReadLine();
-            int pinNumEntered = Convert.ToInt32(str);
-            return pinNumEntered;
-        }
-
-        /*
-         * 
-         *  give the use the options to do with the accoutn
-         *  
-         *  promt for input
-         *  and defer to appropriate method based on input
-         *  
-         */
-        private void dispOptions()
-        {
-            Console.WriteLine("1> take out cash");
-            Console.WriteLine("2> balance");
-            Console.WriteLine("3> exit");
-
-            int input = Convert.ToInt32(Console.ReadLine());
-
-            if (input == 1)
-            {
-                dispWithdraw();
-            }
-            else if (input == 2)
-            {
-                dispBalance();
-            }
-            else if (input == 3)
-            {
-
-
-            }
-            else
-            {
-
-            }
-
-        }
-
-        /*
-         * 
-         * offer withdrawable amounts
-         * 
-         * based on input attempt to withraw the corosponding amount of money
-         * 
-         */
-        private void dispWithdraw()
-        {
-            Console.WriteLine("1> 10");
-            Console.WriteLine("2> 50");
-            Console.WriteLine("3> 500");
-
-            int input = Convert.ToInt32(Console.ReadLine());
-
-            if (input > 0 && input < 4)
-            {
-
-                //opiton one is entered by the user
-                if (input == 1)
-                {
-
-                    //attempt to decrement account by 10 punds
-                    if (activeAccount.decrementBalance(10))
-                    {
-                        //if this is possible display new balance and await key press
-                        Console.WriteLine("new balance " + activeAccount.getBalance());
-                        Console.WriteLine(" (prese enter to continue)");
-                        Console.ReadLine();
-                    }
-                    else
-                    {
-                        //if this is not possible inform user and await key press
-                        Console.WriteLine("insufficent funds");
-                        Console.WriteLine(" (prese enter to continue)");
-                        Console.ReadLine();
-                    }
-                }
-                else if (input == 2)
-                {
-                    if (activeAccount.decrementBalance(50))
-                    {
-                        Console.WriteLine("new balance " + activeAccount.getBalance());
-                        Console.WriteLine(" (prese enter to continue)");
-                        Console.ReadLine();
-                    }
-                    else
-                    {
-                        Console.WriteLine("insufficent funds");
-                        Console.WriteLine(" (prese enter to continue)");
-                        Console.ReadLine();
-                    }
-                }
-                else if (input == 3)
-                {
-                    if (activeAccount.decrementBalance(500))
-                    {
-                        Console.WriteLine("new balance " + activeAccount.getBalance());
-                        Console.WriteLine(" (prese enter to continue)");
-                        Console.ReadLine();
-                    }
-                    else
-                    {
-                        Console.WriteLine("insufficent funds");
-                        Console.WriteLine(" (prese enter to continue)");
-                        Console.ReadLine();
-                    }
-                }
-            }
-        }
-        /*
-         *  display balance of activeAccount and await keypress
-         *  
-         */
-        private void dispBalance()
-        {
-            if (this.activeAccount != null)
-            {
-                Console.WriteLine(" your current balance is : " + activeAccount.getBalance());
-                Console.WriteLine(" (prese enter to continue)");
-                Console.ReadLine();
-            }
-        }
-    }
-
     public class Bank
     {
+        public static Semaphore sema = new Semaphore(0, 1);
         private Account[] ac = new Account[3];
         private Form1 atm;
-        static Semaphore sem = new Semaphore(2, 2);
+
 
         public Bank()
         {
@@ -641,30 +458,20 @@ namespace WindowsFormsApp3
             ac[1] = new Account(750, 2222, 222222);
             ac[2] = new Account(3000, 3333, 333333);
 
+            
+
 
             // Application.Run(new Form1());
             Thread ATM2 = new Thread(new ThreadStart(ThreadProc));
-            Thread ATM1 = new Thread(new ThreadStart(ThreadProc));
             ATM2.Start();
-            
+            Thread ATM1 = new Thread(new ThreadStart(ThreadProc));
             ATM1.Start();
-            ATM2.Join();
-
-
-
-
-
-
         }
 
-           
-    private static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            
-            
-        
-        Bank test = new Bank();
-            
+            Bank test = new Bank();
+
         }
 
         private void ThreadProc()
