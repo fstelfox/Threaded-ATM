@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -13,34 +14,316 @@ namespace WindowsFormsApp3
     public partial class Form1 : Form
     {
         private Account[] ac = new Account[3];
+        private Account activeAccount = null;
+        private int userInput;
+        private int pin;
        
         public Form1()
         {
             InitializeComponent();
+            button1.Click += new EventHandler(MyButtonClick);
+            button2.Click += new EventHandler(MyButtonClick);
+            button3.Click += new EventHandler(MyButtonClick);
+            button4.Click += new EventHandler(MyButtonClick);
+            button5.Click += new EventHandler(MyButtonClick);
+            button6.Click += new EventHandler(MyButtonClick);
+            button7.Click += new EventHandler(MyButtonClick);
+            button8.Click += new EventHandler(MyButtonClick);
+            button9.Click += new EventHandler(MyButtonClick);
+            button0.Click += new EventHandler(MyButtonClick);
+            btnEnter.Click += new EventHandler(inputSelection);
+
+           
         }
+
 
         private void Form1_Load(object sender, EventArgs e)
         {
+
             ac[0] = new Account(300, 1111, 111111);
             ac[1] = new Account(750, 2222, 222222);
             ac[2] = new Account(3000, 3333, 333333);
 
-      
-            runATM();
+
+            promptAccountNum();
+
 
         }
+
+        void promptAccountNum()
+        {
+            lstThing.Items.Add("Please Enter Your Account Number");
+        }
+        void sideInput(Object sender,EventArgs e)
+        {
+            Button button = sender as Button;
+            String switchNum = Convert.ToString(button.Name[(button.Name).Length - 1 ]);
+            Console.WriteLine(switchNum);
+            switch (switchNum)
+            {
+                case "1":
+
+                    withdawCash();
+                    Console.WriteLine("Case 1");
+                    break;
+                case "2":
+                    displayBalance();
+                    Console.WriteLine("Case 2");
+                    break;
+                case "3":
+                    this.Close();
+                    break;
+                default:
+                    Console.WriteLine("Default case");
+                    break;
+            }
+
+        }
+        void MyButtonClick(object sender, EventArgs e)
+        {
+            Button button = sender as Button;
+            txtInput.Text += button.Name[(button.Name).Length - 1];
+        }
+
+        void inputSelection(object sender, EventArgs e)
+        {
+            Button button = sender as Button;
+            try
+            {
+                userInput = Convert.ToInt32(txtInput.Text);
+            }
+            catch
+            {
+                displayOptions();
+            }
+            txtInput.Text = "";
+            if (activeAccount == null)
+            {
+                checkSequence();
+            }
+            else
+            {
+
+                if (activeAccount.checkPin(userInput))
+                {
+                    lstThing.Items.Add("Pin Correct");
+                    pin = userInput;
+                    displayOptions();
+                }
+                else
+                {
+                    lstThing.Items.Add("Pin Incorrect");
+                }
+            }
+        }
+        void withdawCash()
+        {
+           
+
+            while (lstThing.Items.Count > 0)
+            {
+                lstThing.Items.RemoveAt(0);
+            }
+
+            lstThing.Items.Add("1>10 ");
+            lstThing.Items.Add("");
+            lstThing.Items.Add("2>20 ");
+            lstThing.Items.Add("");
+            lstThing.Items.Add("3>40 ");
+            lstThing.Items.Add("");
+            lstThing.Items.Add("4>100 ");
+            lstThing.Items.Add("");
+            lstThing.Items.Add("5> 500");
+            lstThing.Items.Add("");
+
+            lstThing.Items.Add("3> exit");
+            resetButtons();
+            btnOption1.Click += new EventHandler(selectMoney);
+            btnOption2.Click += new EventHandler(selectMoney);
+            btnOption3.Click += new EventHandler(selectMoney);
+            btnOption4.Click += new EventHandler(selectMoney);
+            btnOption5.Click += new EventHandler(selectMoney);
+        }
+
+        void selectMoney(object sender, EventArgs e)
+        {
+            Button button = sender as Button;
+            String switchNum = Convert.ToString(button.Name[(button.Name).Length - 1]);
+            Console.WriteLine(switchNum);
+            switch (switchNum)
+            {
+                case "1":
+                    decBalance(10);
+                    break;
+                case "2":
+                    decBalance(20);
+                    break;
+                case "3":
+                    decBalance(40);
+                    break;
+                case "4":
+                    decBalance(100);
+                    break;
+                case "5":
+                    decBalance(500);
+                    break;
+                default:
+                    Console.WriteLine("Default case(2nd)");
+                    break;
+            }
+
+        }
+        void decBalance(int value)
+        {
+            while (lstThing.Items.Count > 0)
+            {
+                lstThing.Items.RemoveAt(0);
+            }
+
+            if (activeAccount.decrementBalance(value)){
+                lstThing.Items.Add("new balance " + activeAccount.getBalance());
+                lstThing.Items.Add("Press enter button to continue:");
+            }
+            else
+            {
+                lstThing.Items.Add("There is not enough funds in this account");
+                lstThing.Items.Add("Press enter button to continue:");
+               
+            }
+        }
+        void displayOptions()
+        {
+            Console.WriteLine("DISPLAY");
+                while (lstThing.Items.Count > 0)
+                {
+                 lstThing.Items.RemoveAt(0);
+                 }
+                lstThing.Items.Add("1> take out cash");
+                lstThing.Items.Add("");
+                lstThing.Items.Add("2> balance");
+                lstThing.Items.Add("");
+                lstThing.Items.Add("3> exit");
+
+            resetButtons();
+
+            btnOption1.Click += new EventHandler(sideInput);
+            btnOption2.Click += new EventHandler(sideInput);
+            btnOption3.Click += new EventHandler(sideInput);
+
+
+        }
+        void resetButtons()
+        {
+            RemoveClickEvent(btnOption1);
+            RemoveClickEvent(btnOption2);
+            RemoveClickEvent(btnOption3);
+            RemoveClickEvent(btnOption4);
+            RemoveClickEvent(btnOption5);
+
+        }
+        
+        private void displayBalance()
+        {
+            if (this.activeAccount != null)
+            {
+                while (lstThing.Items.Count > 0)
+                {
+                    lstThing.Items.RemoveAt(0);
+                }
+                lstThing.Items.Add(" your current balance is : " + activeAccount.getBalance());
+                lstThing.Items.Add("Press Enter Button to Continue");
+            }
+        }
+        
+
 
         private void lstThing_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+    
         }
 
-        private void runATM()
+        void checkSequence()
         {
-            lstThing.Items.Add("penis");
+
+            activeAccount = findAccount();
+
+            if (activeAccount != null)
+            {
+                Console.WriteLine("AccountFound");
+                promptForPin();
+            }
+            else
+            {   //if the account number entered is not found let the user know!
+                Console.WriteLine("no matching account found.");
+                
+            }
+            
         }
+        private Account findAccount()
+        {
+
+            for (int i = 0; i < this.ac.Length; i++)
+            {
+                if (ac[i].getAccountNum() == userInput)
+                {
+                    return ac[i];
+                }
+            }
+           return null;
+
+        }
+            private bool getAccountNumber()
+        {
+            //lstThing.Items.Clear;
+            lstThing.Items.Add("Enter your account number..");
+
+            return true;
+        }
+        
+
+        private void promptForPin()
+        {
+            lstThing.Items.RemoveAt(0);
+            lstThing.Items.Add("Enter Pin");      
+        }
+        /**
+         * Code From
+         * https://stackoverflow.com/questions/91778/how-to-remove-all-event-handlers-from-an-event
+         * **/
+
+        private void RemoveClickEvent(Button b)
+        {
+            FieldInfo f1 = typeof(Control).GetField("EventClick",
+                BindingFlags.Static | BindingFlags.NonPublic);
+            object obj = f1.GetValue(b);
+            PropertyInfo pi = b.GetType().GetProperty("Events",
+                BindingFlags.NonPublic | BindingFlags.Instance);
+            EventHandlerList list = (EventHandlerList)pi.GetValue(b, null);
+            list.RemoveHandler(obj, list[obj]);
+        }
+
+
 
         private void button10_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button16_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button0_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button21_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void btnEnter_Click(object sender, EventArgs e)
         {
 
         }
@@ -140,12 +423,12 @@ namespace WindowsFormsApp3
         {
             this.ac = ac;
 
-            // an infanite loop to keep the flow of controll going on and on
+            // an infinite loop to keep the flow of controll going on and on
             while (true)
             {
 
                 //ask for account number and store result in acctiveAccount (null if no match found)
-                activeAccount = this.findAccount();
+              
 
                 if (activeAccount != null)
                 {
@@ -167,6 +450,7 @@ namespace WindowsFormsApp3
 
 
         }
+      
 
         /*
          *    this method promts for the input of an account number
@@ -177,22 +461,7 @@ namespace WindowsFormsApp3
          *    if the for loop completest with no match we return null
          * 
          */
-        private Account findAccount()
-        {
-            Console.WriteLine("enter your account number..");
 
-            int input = Convert.ToInt32(Console.ReadLine());
-
-            for (int i = 0; i < this.ac.Length; i++)
-            {
-                if (ac[i].getAccountNum() == input)
-                {
-                    return ac[i];
-                }
-            }
-
-            return null;
-        }
         /*
          * 
          *  this jsut promt the use to enter a pin number

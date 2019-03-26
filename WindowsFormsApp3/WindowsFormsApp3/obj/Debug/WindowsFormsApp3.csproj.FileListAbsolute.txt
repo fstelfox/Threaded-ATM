@@ -8,3 +8,13 @@ C:\Users\finnstelfox\source\repos\WindowsFormsApp3\WindowsFormsApp3\bin\Debug\Wi
 C:\Users\finnstelfox\source\repos\WindowsFormsApp3\WindowsFormsApp3\bin\Debug\WindowsFormsApp3.pdb
 C:\Users\finnstelfox\source\repos\WindowsFormsApp3\WindowsFormsApp3\obj\Debug\WindowsFormsApp3.exe
 C:\Users\finnstelfox\source\repos\WindowsFormsApp3\WindowsFormsApp3\obj\Debug\WindowsFormsApp3.pdb
+C:\Users\Lenovo\Documents\GitHub\Threaded-ATM\WindowsFormsApp3\WindowsFormsApp3\bin\Debug\WindowsFormsApp3.exe.config
+C:\Users\Lenovo\Documents\GitHub\Threaded-ATM\WindowsFormsApp3\WindowsFormsApp3\bin\Debug\WindowsFormsApp3.exe
+C:\Users\Lenovo\Documents\GitHub\Threaded-ATM\WindowsFormsApp3\WindowsFormsApp3\bin\Debug\WindowsFormsApp3.pdb
+C:\Users\Lenovo\Documents\GitHub\Threaded-ATM\WindowsFormsApp3\WindowsFormsApp3\obj\Debug\WindowsFormsApp3.csprojAssemblyReference.cache
+C:\Users\Lenovo\Documents\GitHub\Threaded-ATM\WindowsFormsApp3\WindowsFormsApp3\obj\Debug\WindowsFormsApp3.Form1.resources
+C:\Users\Lenovo\Documents\GitHub\Threaded-ATM\WindowsFormsApp3\WindowsFormsApp3\obj\Debug\WindowsFormsApp3.Properties.Resources.resources
+C:\Users\Lenovo\Documents\GitHub\Threaded-ATM\WindowsFormsApp3\WindowsFormsApp3\obj\Debug\WindowsFormsApp3.csproj.GenerateResource.cache
+C:\Users\Lenovo\Documents\GitHub\Threaded-ATM\WindowsFormsApp3\WindowsFormsApp3\obj\Debug\WindowsFormsApp3.csproj.CoreCompileInputs.cache
+C:\Users\Lenovo\Documents\GitHub\Threaded-ATM\WindowsFormsApp3\WindowsFormsApp3\obj\Debug\WindowsFormsApp3.exe
+C:\Users\Lenovo\Documents\GitHub\Threaded-ATM\WindowsFormsApp3\WindowsFormsApp3\obj\Debug\WindowsFormsApp3.pdb
