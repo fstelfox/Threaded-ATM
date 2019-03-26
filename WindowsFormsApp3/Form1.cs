@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
@@ -39,10 +40,10 @@ namespace WindowsFormsApp3
 
         private void Form1_Load(object sender, EventArgs e)
         {
-          
 
+            
             promptAccountNum();
-
+               
         }
 
         void promptAccountNum()
@@ -386,8 +387,10 @@ namespace WindowsFormsApp3
         {
             if (this.balance > amount)
             {
-                balance -= amount;
-                return true;
+                TestAwait(amount);
+               
+                
+                return true; 
             }
             else
             {
@@ -395,14 +398,27 @@ namespace WindowsFormsApp3
             }
         }
 
-        /*
-         * This funciton check the account pin against the argument passed to it
-         *
-         * returns:
-         * true if they match
-         * false if they do not
-         */
-        public Boolean checkPin(int pinEntered)
+        public void TestAwait(int amount)
+        {
+            var t = Task.Factory.StartNew(() =>
+            {
+                Console.WriteLine("Start");
+                return Task.Factory.StartNew(() =>
+                {
+                    Task.Delay(2000).Wait(); balance -= amount; ;
+                });
+            });
+            t.Wait();
+            Console.WriteLine("All done");
+        }
+            /*
+             * This funciton check the account pin against the argument passed to it
+             *
+             * returns:
+             * true if they match
+             * false if they do not
+             */
+            public Boolean checkPin(int pinEntered)
         {
             if (pinEntered == pin)
             {
@@ -617,7 +633,7 @@ namespace WindowsFormsApp3
     {
         private Account[] ac = new Account[3];
         private Form1 atm;
-
+        static Semaphore sem = new Semaphore(2, 2);
 
         public Bank()
         {
@@ -628,15 +644,26 @@ namespace WindowsFormsApp3
 
             // Application.Run(new Form1());
             Thread ATM2 = new Thread(new ThreadStart(ThreadProc));
-            ATM2.Start();
             Thread ATM1 = new Thread(new ThreadStart(ThreadProc));
+            ATM2.Start();
+            
             ATM1.Start();
+            ATM2.Join();
+
+
+
+
+
 
         }
 
-        private static void Main(string[] args)
+           
+    private static void Main(string[] args)
         {
-            Bank test = new Bank();
+            
+            
+        
+        Bank test = new Bank();
             
         }
 
