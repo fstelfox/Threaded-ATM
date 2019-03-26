@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -18,7 +19,7 @@ namespace WindowsFormsApp3
         private int userInput;
         private int pin;
        
-        public Form1()
+        public Form1(Account[] ac)
         {
             InitializeComponent();
             button1.Click += new EventHandler(MyButtonClick);
@@ -32,28 +33,27 @@ namespace WindowsFormsApp3
             button9.Click += new EventHandler(MyButtonClick);
             button0.Click += new EventHandler(MyButtonClick);
             btnEnter.Click += new EventHandler(inputSelection);
-
-           
+            this.ac = ac;
         }
 
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
-            ac[0] = new Account(300, 1111, 111111);
-            ac[1] = new Account(750, 2222, 222222);
-            ac[2] = new Account(3000, 3333, 333333);
-
+          
 
             promptAccountNum();
-
 
         }
 
         void promptAccountNum()
         {
+            while (lstThing.Items.Count > 0)
+            {
+                lstThing.Items.RemoveAt(0);
+            }
             lstThing.Items.Add("Please Enter Your Account Number");
         }
+
         void sideInput(Object sender,EventArgs e)
         {
             Button button = sender as Button;
@@ -71,7 +71,8 @@ namespace WindowsFormsApp3
                     Console.WriteLine("Case 2");
                     break;
                 case "3":
-                    this.Close();
+                    activeAccount = null;
+                    promptAccountNum();                   
                     break;
                 default:
                     Console.WriteLine("Default case");
@@ -124,14 +125,18 @@ namespace WindowsFormsApp3
             {
                 lstThing.Items.RemoveAt(0);
             }
-
+            lstThing.Items.Add("");
             lstThing.Items.Add("1>10 ");
+            lstThing.Items.Add("");
             lstThing.Items.Add("");
             lstThing.Items.Add("2>20 ");
             lstThing.Items.Add("");
+            lstThing.Items.Add("");
             lstThing.Items.Add("3>40 ");
             lstThing.Items.Add("");
+            lstThing.Items.Add("");
             lstThing.Items.Add("4>100 ");
+            lstThing.Items.Add("");
             lstThing.Items.Add("");
             lstThing.Items.Add("5> 500");
             lstThing.Items.Add("");
@@ -327,13 +332,23 @@ namespace WindowsFormsApp3
         {
 
         }
+
+        private void btnOption1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnOption2_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 
 
     /*
      *   The Account class encapusulates all features of a simple bank account
      */
-    class Account
+    public class Account
     {
         //the attributes for the account
         private int balance;
@@ -595,6 +610,40 @@ namespace WindowsFormsApp3
                 Console.WriteLine(" (prese enter to continue)");
                 Console.ReadLine();
             }
+        }
+    }
+
+    public class Bank
+    {
+        private Account[] ac = new Account[3];
+        private Form1 atm;
+
+
+        public Bank()
+        {
+            ac[0] = new Account(300, 1111, 111111);
+            ac[1] = new Account(750, 2222, 222222);
+            ac[2] = new Account(3000, 3333, 333333);
+
+
+            // Application.Run(new Form1());
+            Thread ATM2 = new Thread(new ThreadStart(ThreadProc));
+            ATM2.Start();
+            Thread ATM1 = new Thread(new ThreadStart(ThreadProc));
+            ATM1.Start();
+
+        }
+
+        private static void Main(string[] args)
+        {
+            Bank test = new Bank();
+            
+        }
+
+        private void ThreadProc()
+        {
+            var frm = new Form1(ac);
+            frm.ShowDialog();
         }
     }
 }
